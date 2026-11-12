@@ -1,5 +1,8 @@
 const readline = require("readline-sync");
 
+let continueProgram = "yes";
+while (continueProgram === "yes") {
+
 console.log("Program Structure");
 console.log("A. Subnet Host Checker");
 console.log("B. Compute Environment Selector");
@@ -42,8 +45,41 @@ console.log("Additional IP addresses needed: " + (devices - usableIPs));
 } else if (choice.toUpperCase() === "B") {
 console.log("You have selected Compute Environment Selector.");
 
+let appName = readline.question("Enter application name: ");
+let monthlyUsers = readline.questionInt("Enter expected monthly users: ");
+let budget = readline.questionInt("Enter monthly budget: ");
+let highAvailability = readline.question("Is high availability required? (yes/no): ");
+
+if (appName.trim() === "" || monthlyUsers < 0 || budget < 0 ||
+(highAvailability.toLowerCase() !== "yes" &&
+highAvailability.toLowerCase() !== "no")) {
+console.log ("Invalid input. Please enter valid application information.");
+
+} else {
+
+if (monthlyUsers > 10000 || highAvailability.toLowerCase() === "yes") {
+console.log("Recommended architecture: EC2 + Load Balancer + Auto Scaling");
+
+} else if (monthlyUsers >= 1000 && monthlyUsers <=10000) {
+console.log("Recommended architecture: EC2 + Load Balancer");
+
+} else {
+console.log("Recommended architecture: Single EC2");
+}
+
+if (budget < 1000 && (monthlyUsers >= 1000 || highAvailability.toLowerCase() === "yes")) {
+console.log("Warning: Your budget is too low for recommended architecture.");
+
+} else if (budget >= 1000 && budget <= 3000 &&
+(monthlyUsers > 10000 || highAvailability.toLowerCase() === "yes")) {
+console.log("Warning: Auto Scaling exceeds your budget.");
+}
+}
+
 } else { 
 console.log("Invalid selection.");
 }
-
+continueProgram = readline.question("Would you like to run another structure? (yes/no): ").toLowerCase();
+}
+console.log("Program ended.");
 
